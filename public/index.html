@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="/index.css">
+    </head>
+    <body onload="spawnPillars([...Array(50).keys()].splice(1))">
+        <div id="header"><a id="header-text" href="https://www.meatspin.com">Totaly Legit Visual Sorting</a></div>
+        <div id="page">
+            <div id="sorting">
+                <div id="pillars">
+                </div>
+            </div>
+            <div id="settings">
+                
+                <input class="input" id="sample-size" placeholder="Sample Size 50 (Recomended Limit 350)" onchange="uppdateSampleSize()"/>
+                <input class="input" id="speed" placeholder="Time Between Action 500MS">
+                <select id="sorting-dropdown">
+                    <optgroup label="Sorting Algorthms">
+                        <option value="QuickSort">QuickSort</option>
+                        <option value="BogoSort">BogoSort</option>
+                    </optgroup>
+                </select>
+                <label for="sound">Sound  </label>
+                <input id="sound" type="checkbox" checked="True">
+                <audio id="audio">
+                    <source src="bop.mp3" type="audio/mpeg">
+                </audio>
+                <button id="start-sort" onclick="start()">Start</button>
+            </div>
+        </div>
+    </body>
+    <script src="/index.js"></script>
+</html>
+<!-- balls -->

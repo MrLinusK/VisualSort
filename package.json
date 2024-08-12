@@ -1,0 +1,11 @@
+{
+  "name": "src",
+  "version": "1.0.0",
+  "description": "Atepmted visual sorting",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo Its Alive!"
+  },
+  "author": "Linus Ulvatne",
+  "license": "ISC"
+}

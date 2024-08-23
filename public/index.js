@@ -1,4 +1,5 @@
-let sampleSize = 50;
+let sampleSize = 1000;
+let timeAction = 100;
 let lastFreq = 0;
 let data = []
 
@@ -7,6 +8,12 @@ const audio = document.getElementById("audio");
 const pillarParent = document.getElementById("pillars");
 const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
 
+async function load() {
+    document.getElementById("sample-size").value = parseInt(sampleSize);
+    document.getElementById("action-time").value = parseInt(timeAction);
+    await uppdateSampleSize();
+    await uppdateActionTime();
+}
 
 async function start(){
     function shuffle(array) {
@@ -26,9 +33,12 @@ async function start(){
     data = [...Array(sampleSize+1).keys()].splice(1);
     shuffle(data);
     spawnPillars(data);
+
+    //wait
     await new Promise(res => setTimeout(res, 1000));
 
     // Do the sorting algorytm
+    console.log(sampleSize)
     await quickSort(data);
     
     //cleanup
@@ -40,16 +50,14 @@ async function start(){
 }
 
 async function playNote(_frequency) {
+
+    // Get frequency
     let frequency = parseInt((_frequency- 1)* (400/(sampleSize-1)) + 200)
     if (frequency == lastFreq){
         return
     }
 
-
-    console.log(frequency)
-
-    if (!document.getElementById("sound").checked) return;
-    console.log("a")
+    // Create Audo
     const oscillator = new OscillatorNode(audioCtx);
     const gainNode = new GainNode(audioCtx);
     oscillator.type = "square";
@@ -58,17 +66,15 @@ async function playNote(_frequency) {
     oscillator.connect(gainNode).connect(audioCtx.destination);
     oscillator.start();
 
-    setTimeout(function() {
+    //wait before plaing another frequency
+    setTimeout(async function() {
         oscillator.stop();
     }, 50);
 
-    lastFreq = frequency+0
+    lastFreq = frequency+0 // +0 is bacuase i dont want to save the pointer
 }
 
 async function loopthrough(){
-    if (sampleSize > 1000){
-        return
-    }
 
     for(let i = 1; i <= sampleSize; i++){
         
@@ -81,33 +87,25 @@ async function loopthrough(){
     }
 }
 
-async function uppdateSampleSize(){
-    let x = document.getElementById("sample-size").value;
-    sampleSize = parseInt(x);
-    if((isNaN(sampleSize))||(sampleSize < 4)){sampleSize = 4;}
-
-    spawnPillars([...Array(sampleSize+1).keys()].splice(1), 0)
-}
-
 async function spawnPillars(list, p){ //Takes List, Return Void
 
-    let sty;
+    let pillarStyle;
     if (sampleSize < 201){
-        sty = 'pillar border'
+        pillarStyle = 'pillar border'
     }else{
-        sty = 'pillar'
+        pillarStyle = 'pillar'
     }
 
     pillarParent.innerHTML = '';
     for(const i of list){
         let pillar = document.createElement('div');
         if(i == p){
-            pillar.className = `${sty} green`;
-            if (document.getElementById("sound").checked){
+            pillar.className = `${pillarStyle} green`;
+            if (document.getElementById("sound-check").checked){
                 playNote(i)
             }
         }else{
-            pillar.className = `${sty} gray`;
+            pillar.className = `${pillarStyle} gray`;
         }
 
         pillar.id = `pillar-${i}`;
@@ -116,14 +114,8 @@ async function spawnPillars(list, p){ //Takes List, Return Void
 
         pillarParent.appendChild(pillar);
     }
-    let speed = document.getElementById("speed").value
-    if (speed == ''){
-        speed = 500
-    }
-    else{
-        speed = parseInt(speed)
-    }
-    await new Promise(res => setTimeout(res, speed));
+
+    await new Promise(res => setTimeout(res, timeAction));
 }
 
 async function replace_data(sequenceToFind, sequenceToReplace, p){
@@ -192,4 +184,24 @@ async function quickSort(_arr){ //Takes List, Return List
     await quickSort(above)
     //End of quickSort
     
+}
+
+
+async function uppdateSampleSize(){
+    sampleSize = parseInt(document.getElementById("sample-size").value);
+    let display = document.getElementById("sample-text");
+
+    if(!Number.isInteger(sampleSize) || (sampleSize < 4)){sampleSize = 4;}
+
+    display.innerHTML = `Sample Size: ${sampleSize}`;
+    spawnPillars([...Array(sampleSize+1).keys()].splice(1), 0)
+}
+
+async function uppdateActionTime(){
+    timeAction = parseInt(document.getElementById("action-time").value);
+    let display = document.getElementById("time-text");
+
+    if(!Number.isInteger(timeAction) ||(timeAction < 4)){timeAction = 4;}
+
+    display.innerHTML = `Time per Action: ${timeAction}ms`;
 }

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="/index.css">
+        <link rel="stylesheet" type="text/css" href="./index.css">
     </head>
-    <body onload="spawnPillars([...Array(50).keys()].splice(1))">
+    <body onload="load()">
         <div id="header"><a id="header-text" href="https://www.meatspin.com">Totaly Legit Visual Sorting</a></div>
         <div id="page">
             <div id="sorting">
@@ -12,23 +12,38 @@
             </div>
             <div id="settings">
                 
-                <input class="input" id="sample-size" placeholder="Sample Size 50 (Recomended Limit 350)" onchange="uppdateSampleSize()"/>
-                <input class="input" id="speed" placeholder="Time Between Action 500MS">
-                <select id="sorting-dropdown">
-                    <optgroup label="Sorting Algorthms">
-                        <option value="QuickSort">QuickSort</option>
-                        <option value="BogoSort">BogoSort</option>
-                    </optgroup>
-                </select>
-                <label for="sound">Sound  </label>
-                <input id="sound" type="checkbox" checked="True">
-                <audio id="audio">
-                    <source src="bop.mp3" type="audio/mpeg">
-                </audio>
-                <button id="start-sort" onclick="start()">Start</button>
+
+
+                <div class="slide-container">
+                    <h4 class="slider-text" id="sample-text"></h4>
+                    <input type="range" min="5" max="1000" class="slider" id="sample-size" onchange="uppdateSampleSize()">
+                </div>
+                
+                                
+                <div class="slide-container">
+                    <h4 class="slider-text" id="time-text"></h4>
+                    <input type="range" min="0" max="2000" class="slider" id="action-time" onchange="uppdateActionTime()">
+                </div>
+                
+                <div id="sound-wrapper">
+                    <h4 id="sound-text" class="slide-text">Sound: </h4>
+                    <input id="sound-check" type="checkbox" checked="True" >
+                </div>
+
+                <div style="width: 100%;">
+                    <select id="sorting-dropdown">
+                        <optgroup label="Sorting Algorthms">
+                            <option value="QuickSort">QuickSort</option>
+                            <option value="BogoSort">BogoSort</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <button id="start-sort" onclick="start()">Run</button>
             </div>
+
+
         </div>
     </body>
-    <script src="/index.js"></script>
+    <script src="./index.js"></script>
 </html>
 <!-- balls -->

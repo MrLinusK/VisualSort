@@ -1,7 +1,6 @@
-const { Console } = require('console');
 const express = require('express');
 const path = require('path');
-const PORT = process.env.PORT
+const PORT = 80//process.env.PORT
 const app = express();
 
 const publicPath = path.join(__dirname, './../public');
@@ -33,6 +32,6 @@ app.get('*', (req, res) => {
     }
 });
 
-app.listen(80, () => {
-    console.log(`Running on 80`)
+app.listen(PORT, () => {
+    console.log('Running on Port: ' + PORT)
 });

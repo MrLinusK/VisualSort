@@ -1,12 +1,9 @@
-let sampleSize = 1000;
+let sampleSize = 200;
 let timeAction = 100;
 let lastFreq = 0;
 let data = []
+let sound;
 
-
-const audio = document.getElementById("audio");
-const pillarParent = document.getElementById("pillars");
-const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
 
 async function load() {
     document.getElementById("sample-size").value = parseInt(sampleSize);
@@ -16,6 +13,8 @@ async function load() {
 }
 
 async function start(){
+    sound = document.getElementById("sound-check").checked;
+
     function shuffle(array) {
         let currentIndex = array.length;
 
@@ -34,11 +33,8 @@ async function start(){
     shuffle(data);
     spawnPillars(data);
 
-    //wait
-    await new Promise(res => setTimeout(res, 1000));
-
     // Do the sorting algorytm
-    console.log(sampleSize)
+    await new Promise(res => setTimeout(res, 1000));
     await quickSort(data);
     
     //cleanup
@@ -46,18 +42,24 @@ async function start(){
     await loopthrough();
     await new Promise(res => setTimeout(res, 1000));
     await spawnPillars(data)
-
 }
 
 async function playNote(_frequency) {
 
+    if (!sound){
+        return;
+    }
+
     // Get frequency
     let frequency = parseInt((_frequency- 1)* (400/(sampleSize-1)) + 200)
     if (frequency == lastFreq){
-        return
+        return;
     }
 
     // Create Audo
+    const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+    
+
     const oscillator = new OscillatorNode(audioCtx);
     const gainNode = new GainNode(audioCtx);
     oscillator.type = "square";
@@ -88,12 +90,11 @@ async function loopthrough(){
 }
 
 async function spawnPillars(list, p){ //Takes List, Return Void
+    const pillarParent = document.getElementById("pillars");
 
-    let pillarStyle;
+    let pillarStyle = 'pillar';
     if (sampleSize < 201){
-        pillarStyle = 'pillar border'
-    }else{
-        pillarStyle = 'pillar'
+        pillarStyle += ' border'
     }
 
     pillarParent.innerHTML = '';
@@ -101,9 +102,7 @@ async function spawnPillars(list, p){ //Takes List, Return Void
         let pillar = document.createElement('div');
         if(i == p){
             pillar.className = `${pillarStyle} green`;
-            if (document.getElementById("sound-check").checked){
-                playNote(i)
-            }
+            playNote(i)
         }else{
             pillar.className = `${pillarStyle} gray`;
         }
@@ -186,12 +185,11 @@ async function quickSort(_arr){ //Takes List, Return List
     
 }
 
-
 async function uppdateSampleSize(){
     sampleSize = parseInt(document.getElementById("sample-size").value);
     let display = document.getElementById("sample-text");
 
-    if(!Number.isInteger(sampleSize) || (sampleSize < 4)){sampleSize = 4;}
+    if(sampleSize < 4){sampleSize = 4;}
 
     display.innerHTML = `Sample Size: ${sampleSize}`;
     spawnPillars([...Array(sampleSize+1).keys()].splice(1), 0)
@@ -201,7 +199,7 @@ async function uppdateActionTime(){
     timeAction = parseInt(document.getElementById("action-time").value);
     let display = document.getElementById("time-text");
 
-    if(!Number.isInteger(timeAction) ||(timeAction < 4)){timeAction = 4;}
+    if(timeAction < 0){timeAction = 0;}
 
     display.innerHTML = `Time per Action: ${timeAction}ms`;
 }
